@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0a0a0d">
+    <title>روابطي | Ellbey FF</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --text: #f7f6f4;
+            --text-muted: #b9b8c2;
+            --accent: #ff5127;
+            --accent-soft: #ffb08a;
+            --surface: rgba(14, 13, 18, 0.52);
+            --surface-strong: rgba(20, 19, 24, 0.72);
+            --line: rgba(255, 255, 255, 0.14);
+            --line-strong: rgba(255, 255, 255, 0.24);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            min-height: 100dvh;
+            color: var(--text);
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* ---------- background: sharp, vivid, untouched — no heavy blur/dim ---------- */
+        .background {
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            background: url("background.jpg") center/cover no-repeat;
+            transform: scale(1.02);
+            animation: bgIn 1.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes bgIn {
+            from { transform: scale(1.08); filter: brightness(0.7) saturate(0.9); }
+            to   { transform: scale(1.02); filter: brightness(1) saturate(1.05); }
+        }
+        /* thin scrims only where text sits directly on the photo — never over the card */
+        .scrim-top {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: 140px;
+            z-index: -1;
+            background: linear-gradient(180deg, rgba(0,0,0,0.35), transparent);
+            pointer-events: none;
+        }
+        .scrim-bottom {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            height: 120px;
+            z-index: -1;
+            background: linear-gradient(0deg, rgba(0,0,0,0.4), transparent);
+            pointer-events: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 440px;
+            padding: 72px 20px 36px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+            flex: 1;
+        }
+
+        /* ---------- avatar: sits on the photo, breaks the card's top edge ---------- */
+        .avatar-wrap {
+            position: relative;
+            width: 118px;
+            height: 118px;
+            margin-bottom: -59px;
+            z-index: 3;
+            opacity: 0;
+            animation: dropIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation-delay: 0.5s;
+        }
+        @keyframes dropIn {
+            from { opacity: 0; transform: translateY(-10px) scale(0.94); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .avatar-ring {
+            position: absolute;
+            inset: -3px;
+            border-radius: 50%;
+            background: conic-gradient(from 200deg, var(--accent), #ffd39b, var(--accent));
+            padding: 3px;
+        }
+        .avatar-ring::after {
+            content: "";
+            position: absolute;
+            inset: 3px;
+            border-radius: 50%;
+            border: 3px solid #0e0d12;
+        }
+        .avatar-wrap img {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            display: block;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+        }
+        .badge {
+            position: absolute;
+            bottom: 4px;
+            left: 4px;
+            width: 28px;
+            height: 28px;
+            background: var(--accent);
+            border: 3px solid #0e0d12;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 4;
+        }
+        .badge svg { width: 13px; height: 13px; fill: #0e0d12; }
+
+        /* ---------- the card: a single dependable surface for every link ---------- */
+        .card {
+            width: 100%;
+            background: var(--surface);
+            backdrop-filter: blur(28px) saturate(160%);
+            -webkit-backdrop-filter: blur(28px) saturate(160%);
+            border: 1px solid var(--line);
+            border-radius: 22px;
+            padding: 72px 26px 30px;
+            text-align: center;
+            box-shadow: 0 24px 60px rgba(0,0,0,0.35);
+            opacity: 0;
+            animation: cardIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation-delay: 0.25s;
+        }
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(16px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .name-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            margin-bottom: 5px;
+        }
+        .name {
+            font-size: 26px;
+            font-weight: 900;
+            letter-spacing: -0.3px;
+            color: var(--text);
+        }
+        .verified {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+        }
+        .verified svg { width: 100%; height: 100%; }
+
+        .username {
+            font-size: 14px;
+            color: var(--text-muted);
+            font-weight: 600;
+            direction: ltr;
+            margin-bottom: 14px;
+        }
+        .username span { color: var(--accent-soft); }
+
+        .description {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.75;
+            max-width: 320px;
+            margin: 0 auto 26px;
+        }
+
+        .social-row {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 26px;
+        }
+        .social-row a {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--line);
+            color: var(--text-muted);
+            transition: border-color 0.25s ease, color 0.25s ease, transform 0.25s ease, background 0.25s ease;
+        }
+        .social-row a svg { width: 19px; height: 19px; fill: currentColor; }
+        .social-row a:hover {
+            border-color: var(--accent);
+            color: var(--accent-soft);
+            background: rgba(255, 81, 39, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .links {
+            display: flex;
+            flex-direction: column;
+            gap: 11px;
+            width: 100%;
+            margin-bottom: 22px;
+        }
+
+        .link {
+            position: relative;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            min-height: 58px;
+            padding: 0 20px;
+            text-decoration: none;
+            color: var(--text);
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            font-size: 15.5px;
+            font-weight: 700;
+            transition: border-color 0.25s ease, background 0.25s ease, transform 0.2s ease;
+            overflow: hidden;
+        }
+        .link::before {
+            content: "";
+            position: absolute;
+            inset-inline-start: 0;
+            top: 0; bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, var(--accent), var(--accent-soft));
+            transform: scaleY(0);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .link:hover {
+            border-color: var(--line-strong);
+            background: rgba(255,255,255,0.08);
+            transform: translateY(-2px);
+        }
+        .link:hover::before { transform: scaleY(1); }
+
+        .icon {
+            width: 21px;
+            height: 21px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            transition: color 0.25s ease;
+        }
+        .icon svg { width: 100%; height: 100%; fill: currentColor; }
+        .link:hover .icon { color: var(--accent-soft); }
+
+        .link-text {
+            flex: 1;
+            text-align: center;
+            padding-inline-end: 21px;
+        }
+        .link-arrow {
+            font-size: 13px;
+            color: var(--text-muted);
+            opacity: 0.6;
+        }
+
+        .share-button {
+            width: 100%;
+            min-height: 50px;
+            background: transparent;
+            border: 1px solid var(--line-strong);
+            border-radius: 14px;
+            color: var(--text);
+            font-family: 'Cairo', sans-serif;
+            font-size: 14.5px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            transition: border-color 0.25s ease, color 0.25s ease, background 0.25s ease;
+        }
+        .share-button:hover {
+            border-color: var(--accent);
+            color: var(--accent-soft);
+            background: rgba(255, 81, 39, 0.08);
+        }
+        .share-button svg { width: 17px; height: 17px; fill: currentColor; }
+
+        footer {
+            margin-top: 22px;
+            color: rgba(255,255,255,0.55);
+            font-size: 12px;
+            font-weight: 600;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+        }
+
+        @media (max-width: 400px) {
+            .container { padding: 64px 16px 28px; }
+            .avatar-wrap { width: 104px; height: 104px; margin-bottom: -52px; }
+            .card { padding: 64px 20px 26px; border-radius: 20px; }
+            .name { font-size: 23px; }
+        }
+
+        @media (min-width: 640px) {
+            .container { max-width: 480px; padding-top: 88px; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="background"></div>
+    <div class="scrim-top"></div>
+    <div class="scrim-bottom"></div>
+
+    <main class="container">
+        <div class="avatar-wrap">
+            <div class="avatar-ring"></div>
+            <img src="logo.png" alt="Logo">
+            <span class="badge" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 20.6 7.4 19.2 6z"/></svg>
+            </span>
+        </div>
+
+        <section class="card">
+            <div class="name-row">
+                <h1 class="name"></h1>
+                <span class="verified" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><path fill="#1d9bf0" d="M12 2 14.5 4.3 17.8 3.9 18.6 7.2 21.6 8.9 20.3 12 21.6 15.1 18.6 16.8 17.8 20.1 14.5 19.7 12 22 9.5 19.7 6.2 20.1 5.4 16.8 2.4 15.1 3.7 12 2.4 8.9 5.4 7.2 6.2 3.9 9.5 4.3Z"/><path fill="#fff" d="M10.2 15.6 7.4 12.8l1.2-1.2 1.6 1.6 3.8-3.8 1.2 1.2Z"/></svg>
+                </span>
+            </div>
+            <p class="username">@<span>ellbey_ff</span></p>
+            <p class="description">جميع حساباتي وروابطي الرسمية تجدها هنا</p>
+
+            <nav class="social-row">
+                <a href="https://www.instagram.com/ellbey_ff?stkn=bHRkNGIyNmRwbWpu" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor"/></svg>
+                </a>
+                <a href="https://www.tiktok.com/@ellbey_ff?_r=1&_t=ZS-99W8Ovszbk2" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>
+                </a>
+                <a href="https://youtube.com/@ellbey_ff?si=gC4usGnGOoL3f1vT" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                </a>
+            </nav>
+
+            <div class="links">
+                <a class="link" href="https://www.instagram.com/ellbey_ff?stkn=bHRkNGIyNmRwbWpu" target="_blank" rel="noopener noreferrer">
+                    <span class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor"/></svg>
+                    </span>
+                    <span class="link-text">Instagram</span>
+                    <span class="link-arrow">←</span>
+                </a>
+
+                <a class="link" href="https://www.tiktok.com/@ellbey_ff?_r=1&_t=ZS-99W8Ovszbk2" target="_blank" rel="noopener noreferrer">
+                    <span class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>
+                    </span>
+                    <span class="link-text">TikTok</span>
+                    <span class="link-arrow">←</span>
+                </a>
+
+                <a class="link" href="https://youtube.com/@ellbey_ff?si=gC4usGnGOoL3f1vT" target="_blank" rel="noopener noreferrer">
+                    <span class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                    </span>
+                    <span class="link-text">YouTube</span>
+                    <span class="link-arrow">←</span>
+                </a>
+            </div>
+
+            <button class="share-button" onclick="sharePage()">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>
+                <span>مشاركة</span>
+            </button>
+        </section>
+
+        <footer>
+            تم إنشاء الموقع © 2026
+        </footer>
+    </main>
+
+    <script>
+        async function sharePage() {
+            const shareData = {
+                title: 'روابطي | Ellbey FF',
+                text: 'تابعني على جميع منصات التواصل الاجتماعي',
+                url: window.location.href
+            };
+
+            if (navigator.share) {
+                try {
+                    await navigator.share(shareData);
+                } catch (err) {
+                    // المستخدم ألغى المشاركة أو حدث خطأ - لا حاجة لفعل شيء
+                }
+                return;
+            }
+
+            // على الأجهزة أو المتصفحات التي لا تدعم واجهة المشاركة الأصلية
+            // (غالباً أجهزة الحاسوب) نفتح مباشرة رابط مشاركة واتساب حقيقي
+            const whatsappUrl = 'https://api.whatsapp.com/send?text=' +
+                encodeURIComponent(shareData.text + ' ' + shareData.url);
+            window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+        }
+    </script>
+
+</body>
+</html>
