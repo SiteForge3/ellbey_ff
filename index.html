@@ -42,26 +42,34 @@
             align-items: center;
         }
 
-        /* ---------- background: sharp, vivid, untouched — no heavy blur/dim ---------- */
+        /* ---------- خلفية واضحة جداً - بدون تأثيرات قوية ---------- */
         .background {
             position: fixed;
             inset: 0;
             z-index: -2;
             background: url("background.jpg") center/cover no-repeat;
-            transform: scale(1.02);
+            transform: scale(1);
             animation: bgIn 1.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            filter: brightness(1.15) saturate(1.2) contrast(1.08);
         }
         @keyframes bgIn {
-            from { transform: scale(1.08); filter: brightness(0.7) saturate(0.9); }
-            to   { transform: scale(1.02); filter: brightness(1) saturate(1.05); }
+            from { 
+                transform: scale(1.02); 
+                filter: brightness(0.95) saturate(1.1) contrast(1.05);
+            }
+            to   { 
+                transform: scale(1); 
+                filter: brightness(1.15) saturate(1.2) contrast(1.08);
+            }
         }
-        /* thin scrims only where text sits directly on the photo — never over the card */
+
+        /* طبقات شفافة جداً جداً - كادت تكون غير موجودة */
         .scrim-top {
             position: fixed;
             top: 0; left: 0; right: 0;
             height: 140px;
             z-index: -1;
-            background: linear-gradient(180deg, rgba(0,0,0,0.35), transparent);
+            background: linear-gradient(180deg, rgba(0,0,0,0.05), transparent);
             pointer-events: none;
         }
         .scrim-bottom {
@@ -69,14 +77,14 @@
             bottom: 0; left: 0; right: 0;
             height: 120px;
             z-index: -1;
-            background: linear-gradient(0deg, rgba(0,0,0,0.4), transparent);
+            background: linear-gradient(0deg, rgba(0,0,0,0.08), transparent);
             pointer-events: none;
         }
 
         .container {
             width: 100%;
-            max-width: 440px;
-            padding: 72px 20px 36px;
+            max-width: 360px;
+            padding: 72px 16px 36px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -85,7 +93,7 @@
             flex: 1;
         }
 
-        /* ---------- avatar: sits on the photo, breaks the card's top edge ---------- */
+        /* ---------- avatar: يبرز على الخلفية ---------- */
         .avatar-wrap {
             position: relative;
             width: 118px;
@@ -139,17 +147,17 @@
         }
         .badge svg { width: 13px; height: 13px; fill: #0e0d12; }
 
-        /* ---------- the card: a single dependable surface for every link ---------- */
+        /* ---------- الكارت الرئيسي - شفاف جداً ---------- */
         .card {
             width: 100%;
-            background: var(--surface);
-            backdrop-filter: blur(28px) saturate(160%);
-            -webkit-backdrop-filter: blur(28px) saturate(160%);
-            border: 1px solid var(--line);
+            background: rgba(14, 13, 18, 0.25);
+            backdrop-filter: blur(12px) saturate(140%);
+            -webkit-backdrop-filter: blur(12px) saturate(140%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 22px;
-            padding: 72px 26px 30px;
+            padding: 72px 20px 30px;
             text-align: center;
-            box-shadow: 0 24px 60px rgba(0,0,0,0.35);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
             opacity: 0;
             animation: cardIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             animation-delay: 0.25s;
@@ -209,8 +217,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--line);
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             color: var(--text-muted);
             transition: border-color 0.25s ease, color 0.25s ease, transform 0.25s ease, background 0.25s ease;
         }
@@ -218,7 +226,7 @@
         .social-row a:hover {
             border-color: var(--accent);
             color: var(--accent-soft);
-            background: rgba(255, 81, 39, 0.1);
+            background: rgba(255, 81, 39, 0.12);
             transform: translateY(-3px);
         }
 
@@ -239,8 +247,8 @@
             padding: 0 20px;
             text-decoration: none;
             color: var(--text);
-            background: rgba(255,255,255,0.04);
-            border: 1px solid var(--line);
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
             border-radius: 14px;
             font-size: 15.5px;
             font-weight: 700;
@@ -258,8 +266,8 @@
             transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .link:hover {
-            border-color: var(--line-strong);
-            background: rgba(255,255,255,0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+            background: rgba(255,255,255,0.1);
             transform: translateY(-2px);
         }
         .link:hover::before { transform: scaleY(1); }
@@ -291,7 +299,7 @@
             width: 100%;
             min-height: 50px;
             background: transparent;
-            border: 1px solid var(--line-strong);
+            border: 1px solid rgba(255, 255, 255, 0.16);
             border-radius: 14px;
             color: var(--text);
             font-family: 'Cairo', sans-serif;
@@ -307,27 +315,28 @@
         .share-button:hover {
             border-color: var(--accent);
             color: var(--accent-soft);
-            background: rgba(255, 81, 39, 0.08);
+            background: rgba(255, 81, 39, 0.1);
         }
         .share-button svg { width: 17px; height: 17px; fill: currentColor; }
 
         footer {
             margin-top: 22px;
-            color: rgba(255,255,255,0.55);
+            color: rgba(255,255,255,0.65);
             font-size: 12px;
             font-weight: 600;
             text-shadow: 0 1px 4px rgba(0,0,0,0.5);
         }
 
         @media (max-width: 400px) {
-            .container { padding: 64px 16px 28px; }
-            .avatar-wrap { width: 104px; height: 104px; margin-bottom: -52px; }
-            .card { padding: 64px 20px 26px; border-radius: 20px; }
-            .name { font-size: 23px; }
+            .container { max-width: 320px; padding: 56px 12px 24px; }
+            .avatar-wrap { width: 100px; height: 100px; margin-bottom: -50px; }
+            .card { padding: 56px 16px 24px; border-radius: 18px; }
+            .name { font-size: 22px; }
+            .link { min-height: 52px; font-size: 14.5px; }
         }
 
-        @media (min-width: 640px) {
-            .container { max-width: 480px; padding-top: 88px; }
+        @media (min-width: 600px) {
+            .container { max-width: 380px; }
         }
     </style>
 </head>
@@ -418,13 +427,12 @@
                 try {
                     await navigator.share(shareData);
                 } catch (err) {
-                    // المستخدم ألغى المشاركة أو حدث خطأ - لا حاجة لفعل شيء
+                    // المستخدم ألغى المشاركة أو حدث خطأ
                 }
                 return;
             }
 
-            // على الأجهزة أو المتصفحات التي لا تدعم واجهة المشاركة الأصلية
-            // (غالباً أجهزة الحاسوب) نفتح مباشرة رابط مشاركة واتساب حقيقي
+            // للأجهزة التي لا تدعم الواجهة الأصلية
             const whatsappUrl = 'https://api.whatsapp.com/send?text=' +
                 encodeURIComponent(shareData.text + ' ' + shareData.url);
             window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
